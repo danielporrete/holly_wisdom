@@ -29,15 +29,15 @@ Mejorar tiempo en media maratón. Sin carrera agendada en los próximos 6 meses.
 
 ## Zonas de Frecuencia Cardiaca
 
-FC Maxima estimada: ~181 bpm (observada en intervalos)
+FC Maxima real: 187 bpm (observada en series Apr 2026)
 
 | Zona | FC | Descripcion | Uso |
 |------|-----|-------------|-----|
-| Z1 | <130 | Muy facil | Recuperacion, calentamiento |
-| Z2 | 130-150 | Facil, conversacional | Fondos, base aerobica |
-| Z3 | 150-165 | Moderado | Ritmo maraton |
-| Z4 | 165-175 | Umbral | Media maraton, tempo |
-| Z5 | >175 | Maximo | Intervalos cortos, VO2max |
+| Z1 | <140 | Muy facil | Recuperacion, calentamiento |
+| Z2 | 140-155 | Facil, conversacional | Fondos, base aerobica |
+| Z3 | 155-168 | Moderado / Tempo | Ritmo maraton, umbral |
+| Z4 | 168-180 | Umbral alto / Series | Media maraton, intervalos |
+| Z5 | >180 | Maximo | VO2max, series cortas |
 
 ## Paces por Tipo de Sesion
 
@@ -104,6 +104,32 @@ El lugar de entrenamiento tiene **zonas con pérdida de GPS por árboles**. Regl
 | Mié 11 | 5.87 km | 4:57/km | 165 | 176 | Z5 69% + Z4 18% | 3.7 tempo | 54 |
 
 Volumen acumulado al mié: **20.1 km**. VO2Max actual estimado por Garmin: **54**.
+
+## Flujo de trabajo semanal
+
+### Skill `/training-semanal`
+Skill local en `~/.claude/skills/training-semanal/SKILL.md`. Se invoca cada domingo en la noche para cerrar la semana y planear la siguiente.
+
+**Flujo completo:**
+1. Lee actividades de la semana via MCP Garmin Workouts (`list_activities`, `get_calendar`)
+2. Analiza FC vs pace vs zonas target
+3. Presenta resumen semana pasada + plan próxima semana → pide aprobación
+4. Tras aprobación: sube 6 workouts con `upload_workout` + los agenda con `schedule_workout`
+5. Actualiza `TRAINING_LOG.md` (histórico plan vs ejecutado)
+6. Notifica a Kipchoge (Telegram) con resumen
+
+**Notas del MCP disponible:**
+- Solo está disponible `mcp__garmin-workouts__*` (workouts, actividades, calendario)
+- HRV, sueño, body battery y training readiness requieren `@nicolasvegam/garmin-connect-mcp` — no disponible en esta sesión, omitir o señalar ausencia
+- Kipchoge bot token: `~/.garmin_telegram_token` | Chat ID: `8605832565`
+
+**Lógica de progresión:**
+- Long run: +2km/semana desde 24km hasta 34km, luego negative splits (60% Z2 + 40% Z3)
+- Martes alterna cada semana: Series Z4 ↔ Tempo Z3
+- Jueves: estímulo opuesto al martes
+- Si long run no ejecutado: mantener distancia (no progresar)
+
+**TRAINING_LOG.md:** Histórico de semanas ejecutadas. El plan de la semana entrante no se registra — queda en Garmin y se registra en la sync siguiente.
 
 ## Notas
 - Mejoró 10 min entre maratón 1 y 2 (3:24 → 3:14)
